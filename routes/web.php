@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\CustomerController;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,4 +17,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+// Routes for `Customer` management
+Route::group(['prefix' => 'customer'], function(Router $route) {
+    $route->get('', [CustomerController::class, 'index'])->name('customer.index');
+    $route->get('{customer_id}', [CustomerController::class, 'show'])->name('customer.show');
+    $route->post('', [CustomerController::class, 'store'])->name('customer.store');
+    $route->put('{customer_id}', [CustomerController::class, 'update'])->name('customer.update');
+    $route->delete('{customer_id}', [CustomerController::class, 'destroy'])->name('customer.destroy');
 });

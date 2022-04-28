@@ -20,3 +20,23 @@
                 <h1>{{ $pageTitle }}</h1>
             </div>
         </div>
+
+        <!-- Buttons -->
+        <div class="row py-2">
+            <div class="col-sm-4">
+                <a href="{{ route('customer.index') }}" type="button" class="btn btn-primary"><i class="fa fa-home"></i> {{ __('Home') }}</a>
+                <a href="{{ route('customer.form_store') }}" type="button" class="btn btn-success"><i class="fa fa-add"></i> {{ __('Add Customer') }}</a>
+            </div>
+            <div class="btn-group col-sm-4" role="group" aria-label="Add New Customer">
+            </div>
+            <div class="col-sm-4">
+                <div class="input-group">
+                    <input type="text" id="customerSearchCriteria" class="form-control" placeholder="{{ __('First name, last name, email...') }}" aria-label="Input group example" aria-describedby="btnGroupAddon" value="{{ $search }}">
+                    <div class="input-group-append">
+                        <div class="input-group-text" id="btnGroupAddon">
+                            <button data-endpoint="{{ route('customer.index') }}" class="btn btn-primary" id="customerSearch">{{ __('Search') }}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>

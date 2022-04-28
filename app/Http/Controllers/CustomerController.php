@@ -40,11 +40,7 @@ class CustomerController extends BaseController
     public function index(CustomerIndexRequest $request): View
     {
         // Sort params
-        $sort = Arr::get($request, 'sort', 'id');
-        $order = Arr::get($request, 'order', 'ASC');
-        $limit = Arr::get($request, 'limit', 10);
-        $page = Arr::get($request, 'page', 1);
-        $search = Arr::get($request, 'search');
+        extract($this->getQueryStringParams($request));
 
         // Results
         $query = Customer::orderBy($sort, $order);
@@ -83,13 +79,25 @@ class CustomerController extends BaseController
      */
     public function show(Request $request, int $customerId): View
     {
+        extract($this->getQueryStringParams($request));
+
         // Get our guy
         $customer = Customer::with(['roles', 'meta'])
             ->findOrFail($customerId)
             ->makeHidden('password');
 
         // VIew
-        return view('customer.show', ['customer' => $customer]);
+        return view(
+            'customer.show',
+            [
+                'customer' => $customer,
+                'sort' => $sort,
+                'order' => $order,
+                'limit' => $limit,
+                'page' => $page,
+                'search' => $search
+            ]
+        );
     }
 
     public function store(CustomerCreateRequest $request)
@@ -114,11 +122,7 @@ class CustomerController extends BaseController
         DeleteCustomer::execute(Customer::findOrFail($customerId));
 
         // Redirect back to our Customer Index
-        $sort = Arr::get($request, 'sort', 'id');
-        $order = Arr::get($request, 'order', 'ASC');
-        $limit = Arr::get($request, 'limit', 10);
-        $page = Arr::get($request, 'page', 1);
-        $search = Arr::get($request, 'search');
+        extract($this->getQueryStringParams($request));
 
         return redirect(sprintf('customer?sort=%s&order=%s&limit=%s&page=%s&search=%s', $sort, $order, $limit, $page, $search));
     }
@@ -138,7 +142,7 @@ class CustomerController extends BaseController
             ->makeHidden('password');
 
         // View
-        return $this->getForm($customer);
+        return $this->getForm($request, $customer);
     }
 
     /**
@@ -150,16 +154,17 @@ class CustomerController extends BaseController
     public function storeForm(Request $request): View
     {
         // View
-        return $this->getForm();
+        return $this->getForm($request);
     }
 
     /**
      * Render store / update form
      *
+     * @param $request
      * @param Customer|null $customer
      * @return View
      */
-    private function getForm(?Customer $customer = null): View
+    private function getForm($request, ?Customer $customer = null): View
     {
         $data = [
             'allowed_roles' => Role::get(),
@@ -169,10 +174,30 @@ class CustomerController extends BaseController
         if (!is_null($customer)) {
             $data['customer'] = $customer;
             $data['endpoint'] = route('customer.update', ['customer_id' => $customer->id]);
+            $data['pageTitle'] = __('Update Customer');
         } else {
             $data['endpoint'] = route('customer.store');
+            $data['pageTitle'] = __('Store Customer');
         }
 
+        $data = array_merge($data, $this->getQueryStringParams($request));
+
         return view('customer.form', $data);
+    }
+
+    /**
+     * @param $request
+     * @return array
+     */
+    private function getQueryStringParams($request): array
+    {
+        // Sort params
+        $sort = Arr::get($request, 'sort', 'id');
+        $order = Arr::get($request, 'order', 'ASC');
+        $limit = Arr::get($request, 'limit', 10);
+        $page = Arr::get($request, 'page', 1);
+        $search = Arr::get($request, 'search');
+
+        return compact('sort', 'order', 'limit', 'page', 'search');
     }
 }

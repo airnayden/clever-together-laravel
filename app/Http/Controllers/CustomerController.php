@@ -64,7 +64,7 @@ class CustomerController extends BaseController
             'customer.index',
             [
                 'customers' => $customers,
-                'pageTitle' => __('Customer Index'),
+                'pageTitle' => __('Customers'),
                 'sort' => $sort,
                 'order' => $order,
                 'limit' => $limit,

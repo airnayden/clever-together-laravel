@@ -11,6 +11,7 @@
 <!-- Buttons -->
 <div class="row py-2">
     <div class="col-sm-4">
+        <a href="{{ route('customer.index') }}" type="button" class="btn btn-primary"><i class="fa fa-home"></i> {{ __('Home') }}</a>
         <a href="{{ route('customer.form_store') }}" type="button" class="btn btn-success"><i class="fa fa-add"></i> {{ __('Add Customer') }}</a>
     </div>
     <div class="btn-group col-sm-4" role="group" aria-label="Add New Customer">

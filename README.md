@@ -14,6 +14,13 @@ PHP 8.1
 4. Run `php artisan db:seed --class=DatabaseSeeder` in order to create some test customers.
 5. Run `php artisan serve` to start the app.
 
+# Testing
+Run the following commands for tests:
+1. 
+
+# Demo
+You can see a demo of the app here: https://clever-together-laravel.drpanchev.com/
+
 # Notes
 Code, which might be of interest, is located under:
 1. `app/Http/Actions`
@@ -22,7 +29,9 @@ Code, which might be of interest, is located under:
 4. `app/Http/DataTransferObjects`
 5. `app/Http/Controllers`
 6. `app/Http/Models`
-7. `app/database/Migrations`
-8. `app/database/seeders`
-9. `app/database/factories`
-10. `app/tests`
+7. `database/Migrations`
+8. `database/seeders`
+9. `database/factories`
+10. `resources/views`
+11. `public/js`
+12. `tests`

@@ -22,15 +22,23 @@ Route::get('/', function () {
 
 // Routes for `Customer` management
 Route::group(['prefix' => 'customer'], function(Router $route) {
+    // Form Routes
+    $route->get('{customer_id}/update', [CustomerController::class, 'updateForm'])
+        ->whereNumber('customer_id')
+        ->name('customer.form_update');
+    $route->get('store', [CustomerController::class, 'storeForm'])
+        ->name('customer.form_store');
+
+    // Action Routes
     $route->get('', [CustomerController::class, 'index'])->name('customer.index');
     $route->get('{customer_id}', [CustomerController::class, 'show'])
         ->whereNumber('customer_id')
         ->name('customer.show');
     $route->post('', [CustomerController::class, 'store'])->name('customer.store');
-    $route->put('{customer_id}', [CustomerController::class, 'update'])
+    $route->post('{customer_id}/update', [CustomerController::class, 'update'])
         ->whereNumber('customer_id')
         ->name('customer.update');
-    $route->delete('{customer_id}', [CustomerController::class, 'destroy'])
+    $route->post('{customer_id}/destroy', [CustomerController::class, 'destroy'])
         ->whereNumber('customer_id')
         ->name('customer.destroy');
 });

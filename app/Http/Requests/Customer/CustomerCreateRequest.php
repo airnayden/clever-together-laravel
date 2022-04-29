@@ -32,7 +32,7 @@ class CustomerCreateRequest extends FormRequest
         return [
             'first_name' => ['required', 'string'],
             'last_name' => ['required', 'string'],
-            'email' => ['required', Rule::unique('customers')],
+            'email' => ['email', 'required', Rule::unique('customers')],
             'password' => ['required', 'string'],
             'roles' => ['required', 'array'],
             'roles.*' => ['integer'],

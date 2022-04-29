@@ -29,16 +29,17 @@ class CustomerUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
+
         return [
             'first_name' => ['string'],
             'last_name' => ['string'],
-            'email' => [Rule::unique('customers')->ignore($this->get('customer_id'))],
+            'email' => ['email', Rule::unique('customers')->ignore($this->customer_id)],
             'password' => ['string'],
             'roles' => ['array'],
             'roles.*' => ['integer'],
             'meta' => ['nullable', 'array'],
             'meta.*.code' => [new Enum(CustomerMetaCodeEnum::class)],
-            'meta.*.value' => ['required', 'string']
+            'meta.*.value' => ['string']
         ];
     }
 }

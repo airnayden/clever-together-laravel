@@ -6,7 +6,6 @@ use App\Http\Enums\CustomerMetaCodeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CustomerMeta extends Model
 {
@@ -18,6 +17,14 @@ class CustomerMeta extends Model
      * @var string
      */
     protected $table = 'customer_meta';
+
+    /**
+     * @var string[]
+     */
+    protected $fillable = [
+        'code',
+        'value'
+    ];
 
     /**
      * @var string[]

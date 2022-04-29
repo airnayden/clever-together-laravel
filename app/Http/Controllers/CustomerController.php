@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Actions\Customer\CreateOrUpdateCustomer;
 use App\Http\Actions\Customer\DeleteCustomer;
 use App\Http\DataFactories\CustomerDataFactory;
 use App\Http\Enums\CustomerMetaCodeEnum;
@@ -13,6 +14,7 @@ use App\Models\Customer;
 use App\Models\CustomerMeta;
 use App\Models\Role;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Arr;
@@ -89,10 +91,13 @@ class CustomerController extends BaseController
             ->findOrFail($customerId)
             ->makeHidden('password');
 
-        // VIew
+        $customer->meta = $this->filterValidMetaData($customer->meta);
+
+        // View
         return view(
             'customer.show',
             [
+                'allowedMeta' => collect(CustomerMetaCodeEnum::cases())->pluck('name')->toArray(),
                 'customer' => $customer,
                 'sort' => $sort,
                 'order' => $order,
@@ -109,20 +114,39 @@ class CustomerController extends BaseController
      */
     public function store(CustomerCreateRequest $request): RedirectResponse|View
     {
-        $customerData = CustomerDataFactory::fromCreateRequest($request);
+        $customer = CreateOrUpdateCustomer::execute(CustomerDataFactory::fromCreateRequest($request));
+        $customer->meta = $this->filterValidMetaData($customer->meta);
 
-        dd($customerData);
+        // View
+        return view(
+            'customer.showFull',
+            [
+                'customer' => $customer,
+                'success' => __('New customer created!'),
+                'pageTitle' => __('Customer Details')
+            ]
+        );
     }
 
     /**
      * @param CustomerUpdateRequest $request
+     * @param int $customerId
      * @return RedirectResponse|View
      */
-    public function update(CustomerUpdateRequest $request): RedirectResponse|View
+    public function update(CustomerUpdateRequest $request, int $customerId): RedirectResponse|View
     {
-        $customerData = CustomerDataFactory::fromCreateRequest($request);
+        $customer = CreateOrUpdateCustomer::execute(CustomerDataFactory::fromUpdateRequest($request, $customerId));
+        $customer->meta = $this->filterValidMetaData($customer->meta);
 
-        dd($customerData);
+        // View
+        return view(
+            'customer.showFull',
+            [
+                'customer' => $customer,
+                'success' => __('Customer updated!'),
+                'pageTitle' => __('Customer Details')
+            ]
+        );
     }
 
     /**
@@ -190,7 +214,7 @@ class CustomerController extends BaseController
                 return [
                     'prettyName' => ucwords(Str::lower(str_replace('_', ' ', $meta->name))),
                     'name' => $meta->name,
-                    'value' => $meta->value
+                    'value' => $meta->value,
                 ];
             })->toArray()
         ];
@@ -200,10 +224,14 @@ class CustomerController extends BaseController
                 'customer' => $customer,
                 'customerRoles' => $customer->roles->pluck('id')->toArray(),
                 'customerMeta' => $customer->meta->map(function (CustomerMeta $meta) {
-                    return [
-                        'code' => $meta->code->name,
-                        'value' => $meta->value
-                    ];
+                    try {
+                        return [
+                            'code' => $meta->code->name,
+                            'value' => $meta->value
+                        ];
+                    } catch (\Throwable $e) {
+                        // Nothing to do here
+                    }
                 })->keyBy('code')->toArray(),
                 'endpoint' => route('customer.update', ['customer_id' => $customer->id]),
                 'pageTitle' => __('Update Customer')
@@ -233,4 +261,25 @@ class CustomerController extends BaseController
 
         return compact('sort', 'order', 'limit', 'page', 'search');
     }
+
+    /**
+     * @param Collection|null $customerMeta
+     * @return Collection|null
+     */
+    private function filterValidMetaData(?Collection $customerMeta): ?Collection
+    {
+        return $customerMeta->filter(function (CustomerMeta $meta) {
+            try {
+                if (!empty($meta->value)) {
+                    return [
+                        'code' => $meta->code->name,
+                        'value' => $meta->value
+                    ];
+                }
+            } catch (\Throwable $e) {
+                // Nothing to do here
+            }
+        });
+    }
+
 }

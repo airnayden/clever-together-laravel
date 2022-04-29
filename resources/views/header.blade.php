@@ -31,7 +31,7 @@
             </div>
             <div class="col-sm-4">
                 <div class="input-group">
-                    <input type="text" id="customerSearchCriteria" class="form-control" placeholder="{{ __('First name, last name, email...') }}" aria-label="Input group example" aria-describedby="btnGroupAddon" value="{{ $search }}">
+                    <input type="text" id="customerSearchCriteria" class="form-control" placeholder="{{ __('First name, last name, email...') }}" aria-label="Input group example" aria-describedby="btnGroupAddon" value="{{ $search ?? '' }}">
                     <div class="input-group-append">
                         <div class="input-group-text" id="btnGroupAddon">
                             <button data-endpoint="{{ route('customer.index') }}" class="btn btn-primary" id="customerSearch">{{ __('Search') }}</button>

@@ -31,7 +31,7 @@
             <div class="form-group row py-2">
                 <label for="email" class="col-sm-2 col-form-label">{{ __('Email') }}</label>
                 <div class="col-sm-10">
-                    <input type="text" name="email" value="{{ $customer->email ?? old('email') }}" class="@if($errors->has('email')) is-invalid @endif form-control" id="email" placeholder="{{ __('First Name') }}"/>
+                    <input type="text" name="email" value="{{ $customer->email ?? old('email') }}" class="@if($errors->has('email')) is-invalid @endif form-control" id="email" placeholder="{{ __('Email') }}"/>
                 </div>
             </div>
 
@@ -58,7 +58,7 @@
                         <div class="form-group row py-2">
                             <label for="customer-meta-{{ $meta['value'] }}" class="col-sm-2 col-form-label">{{ $meta['prettyName']  }}</label>
                             <div class="col-sm-10">
-                                <input type="text" name="meta[{{ $meta['name'] }}]" value="{{ $customerMeta[$meta['name']]['value'] ?? '' }}" class="form-control" id="customer-meta-{{ $meta['value'] }}" placeholder=""/>
+                                <input type="text" name="meta[{{ $meta['value'] }}]" value="{{ $customerMeta[$meta['name']]['value'] ?? old('meta.' . $meta['value']) }}" class="form-control" id="customer-meta-{{ $meta['value'] }}" placeholder=""/>
                             </div>
                         </div>
                     @endforeach

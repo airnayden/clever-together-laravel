@@ -6,9 +6,10 @@ PHP 8.1
 ## Setup
 1. Clone the repo locally
 2. Edit `.env` with your DB credentials, `APP_KEY` and `APP_URL`
-3. Run `php composer:migrate` to create DB schema
-4. Run `php artisan db:seed --class=DatabaseSeeder` in order to create some test customers.
-5. Run `php artisan serve` to start the app.
+3. Run `composer install` in order to get dependancies
+4. Run `php composer:migrate` to create DB schema
+5. Run `php artisan db:seed --class=DatabaseSeeder` in order to create some test customers.
+6. Run `php artisan serve` to start the app.
 
 ## Testing
 Run the following commands for tests:

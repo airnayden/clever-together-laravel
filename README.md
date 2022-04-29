@@ -12,7 +12,7 @@ PHP 8.1
 
 ## Testing
 Run the following commands for tests:
-1. 
+1. Run `php artisan test`
 
 ## Demo
 You can see a demo of the app here: https://clever-together-laravel.drpanchev.com/
@@ -25,8 +25,11 @@ You can store additional data for a given customer.
 The meta-fields are defined in `app/Http/Enums/CustomerMetaDataCodeEnum.php`
 
 ## TODO
-1. Add proper error handling and DB transaction commit / reversal.
-2. Proper `Role` management. Now we're just seeding it to DB.
+1. Write `negative` tests
+2. Write `edge-case` tests
+3. Add proper error handling and DB transaction commit / reversal.
+4. Proper `Role` management. Now we're just seeding it to DB.
+5. Advanced `CustomerMeta` management.
 
 ### Code, which might be of interest, is located under:
 1. `app/Http/Actions`

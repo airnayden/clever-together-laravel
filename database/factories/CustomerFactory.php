@@ -34,7 +34,13 @@ class CustomerFactory extends Factory
     public function configure(): CustomerFactory
     {
         return $this->afterCreating(function (Customer $customer) {
-            $customer->roles()->attach(Role::inRandomOrder()->first()->id);
+            $role = Role::inRandomOrder()->first();
+
+            if (is_null($role)) {
+                return;
+            }
+
+            $customer->roles()->attach($role->id);
 
             $meta = [];
 

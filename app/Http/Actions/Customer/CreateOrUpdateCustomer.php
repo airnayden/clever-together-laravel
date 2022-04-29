@@ -33,7 +33,7 @@ class CreateOrUpdateCustomer
             $customer->email = $customerData->email;
         }
 
-        if (!is_null($customerData->password)) {
+        if (!empty($customerData->password)) {
             $customer->password = Hash::make($customer->password);
         }
 

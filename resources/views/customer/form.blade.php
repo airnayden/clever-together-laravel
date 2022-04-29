@@ -38,7 +38,7 @@
             <div class="form-group row py-2">
                 <label for="email" class="col-sm-2 col-form-label">{{ __('Password') }}</label>
                 <div class="col-sm-10">
-                    <input type="password" name="password" value="{{ $customer->password ?? old('password') }}" class="@if($errors->has('password')) is-invalid @endif form-control" id="password" placeholder="{{ __('Password') }}"/>
+                    <input type="password" name="password" value="" class="@if($errors->has('password')) is-invalid @endif form-control" id="password" placeholder="{{ __('Password') }}"/>
                 </div>
             </div>
 

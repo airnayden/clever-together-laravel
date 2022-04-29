@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     // Redirect to customer list
-    redirect('customer');
+    return redirect('customer');
 });
 
 // Routes for `Customer` management
@@ -34,7 +34,7 @@ Route::group(['prefix' => 'customer'], function(Router $route) {
     $route->get('{customer_id}', [CustomerController::class, 'show'])
         ->whereNumber('customer_id')
         ->name('customer.show');
-    $route->post('', [CustomerController::class, 'store'])->name('customer.store');
+    $route->post('store', [CustomerController::class, 'store'])->name('customer.store');
     $route->post('{customer_id}/update', [CustomerController::class, 'update'])
         ->whereNumber('customer_id')
         ->name('customer.update');

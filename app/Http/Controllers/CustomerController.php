@@ -3,17 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Http\Actions\Customer\DeleteCustomer;
+use App\Http\DataFactories\CustomerDataFactory;
 use App\Http\Enums\CustomerMetaCodeEnum;
 use App\Http\Requests\Customer\CustomerCreateRequest;
 use App\Http\Requests\Customer\CustomerDestroyRequest;
 use App\Http\Requests\Customer\CustomerIndexRequest;
 use App\Http\Requests\Customer\CustomerUpdateRequest;
 use App\Models\Customer;
+use App\Models\CustomerMeta;
 use App\Models\Role;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -100,14 +103,26 @@ class CustomerController extends BaseController
         );
     }
 
-    public function store(CustomerCreateRequest $request)
+    /**
+     * @param CustomerCreateRequest $request
+     * @return RedirectResponse|View
+     */
+    public function store(CustomerCreateRequest $request): RedirectResponse|View
     {
+        $customerData = CustomerDataFactory::fromCreateRequest($request);
 
+        dd($customerData);
     }
 
-    public function update(CustomerUpdateRequest $request)
+    /**
+     * @param CustomerUpdateRequest $request
+     * @return RedirectResponse|View
+     */
+    public function update(CustomerUpdateRequest $request): RedirectResponse|View
     {
+        $customerData = CustomerDataFactory::fromCreateRequest($request);
 
+        dd($customerData);
     }
 
     /**
@@ -160,36 +175,54 @@ class CustomerController extends BaseController
     /**
      * Render store / update form
      *
-     * @param $request
+     * @param Request|CustomerDestroyRequest|CustomerIndexRequest|CustomerCreateRequest|CustomerUpdateRequest $request
      * @param Customer|null $customer
      * @return View
      */
-    private function getForm($request, ?Customer $customer = null): View
+    private function getForm(
+        Request|CustomerDestroyRequest|CustomerIndexRequest|CustomerCreateRequest|CustomerUpdateRequest $request,
+        ?Customer $customer = null
+    ): View
     {
         $data = [
-            'allowed_roles' => Role::get(),
-            'allowed_meta' => CustomerMetaCodeEnum::cases()
+            'allowedRoles' => Role::get(),
+            'allowedMeta' => collect(CustomerMetaCodeEnum::cases())->map(function (CustomerMetaCodeEnum $meta) {
+                return [
+                    'prettyName' => ucwords(Str::lower(str_replace('_', ' ', $meta->name))),
+                    'name' => $meta->name,
+                    'value' => $meta->value
+                ];
+            })->toArray()
         ];
 
         if (!is_null($customer)) {
-            $data['customer'] = $customer;
-            $data['endpoint'] = route('customer.update', ['customer_id' => $customer->id]);
-            $data['pageTitle'] = __('Update Customer');
+            $additional = [
+                'customer' => $customer,
+                'customerRoles' => $customer->roles->pluck('id')->toArray(),
+                'customerMeta' => $customer->meta->map(function (CustomerMeta $meta) {
+                    return [
+                        'code' => $meta->code->name,
+                        'value' => $meta->value
+                    ];
+                })->keyBy('code')->toArray(),
+                'endpoint' => route('customer.update', ['customer_id' => $customer->id]),
+                'pageTitle' => __('Update Customer')
+            ];
         } else {
-            $data['endpoint'] = route('customer.store');
-            $data['pageTitle'] = __('Store Customer');
+            $additional = [
+                'endpoint' => route('customer.store'),
+                'pageTitle' => __('Store Customer')
+            ];
         }
 
-        $data = array_merge($data, $this->getQueryStringParams($request));
-
-        return view('customer.form', $data);
+        return view('customer.form', array_merge($data, $additional, $this->getQueryStringParams($request)));
     }
 
     /**
-     * @param $request
+     * @param Request|CustomerDestroyRequest|CustomerIndexRequest|CustomerCreateRequest|CustomerUpdateRequest $request
      * @return array
      */
-    private function getQueryStringParams($request): array
+    private function getQueryStringParams(Request|CustomerDestroyRequest|CustomerIndexRequest|CustomerCreateRequest|CustomerUpdateRequest $request): array
     {
         // Sort params
         $sort = Arr::get($request, 'sort', 'id');

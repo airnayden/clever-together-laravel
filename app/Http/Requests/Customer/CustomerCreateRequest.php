@@ -4,11 +4,26 @@ namespace App\Http\Requests\Customer;
 
 use App\Http\Enums\CustomerMetaCodeEnum;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
+use Illuminate\Validation\Validator;
 
 class CustomerCreateRequest extends FormRequest
 {
+    /**
+     * @param Validator $validator
+     * @return void
+     */
+    public function withValidator(Validator $validator): void
+    {
+        if ($validator->fails()) {
+            Redirect::back()
+                ->withErrors($validator->getMessageBag()->getMessages())
+                ->withInput();
+        }
+    }
+
     /**
      * @return array
      */
@@ -19,11 +34,11 @@ class CustomerCreateRequest extends FormRequest
             'last_name' => ['required', 'string'],
             'email' => ['required', Rule::unique('customers')],
             'password' => ['required', 'string'],
-            'roles' => ['nullable', 'array'],
+            'roles' => ['required', 'array'],
             'roles.*' => ['integer'],
             'meta' => ['nullable', 'array'],
             'meta.*.code' => [new Enum(CustomerMetaCodeEnum::class)],
-            'meta.*.value' => ['required', 'string']
+            'meta.*.value' => ['string']
         ];
     }
 }

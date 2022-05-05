@@ -34,12 +34,15 @@ class CustomerCrudPositiveTest extends TestCase
      */
     public function test_customer_index(): void
     {
-        $customer = Customer::factory()->create();
+        $customer1 = Customer::factory()->create();
+        $customer2 = Customer::factory()->create();
 
         $response = $this->get('/customer');
         $response->assertStatus(200);
 
-        $this->assertSeeCustomerDetails($response, $customer);
+
+        $this->assertSeeCustomerDetails($response, $customer1);
+        $this->assertSeeCustomerDetails($response, $customer2);
     }
 
     /**

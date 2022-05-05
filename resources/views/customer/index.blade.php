@@ -1,5 +1,6 @@
 @include('header')
 
+<!-- TODO: Move sort logic to controller -->
 @if ($order == 'ASC')
     @php $newOrder = 'DESC' @endphp
     @php $sortIcon = 'fa-arrow-up' @endphp
@@ -31,8 +32,8 @@
         </thead>
         <tbody>
         @forelse($customers as $customer)
-            <tr>
-                <td>{{ $customer->id }}</td>
+            <tr class="customer-result-list">
+                <td class="customer-name" data-test-id="customer-{{ $customer->id }}">{{ $customer->id }}</td>
                 <td>{{ $customer->first_name }}</td>
                 <td>{{ $customer->last_name }}</td>
                 <td>{{ $customer->email }}</td>
@@ -42,11 +43,11 @@
                     @endforeach
                 </td>
                 <td class="text-center">
-                    <button data-href="{{ route('customer.show',['customer_id' => $customer->id, 'sort' => 'last_name', 'order' => $newOrder, 'limit' => $limit, 'page' => $page, 'search' => $search]) }}" class="btn btn-success customer-show" data-toggle="tooltip" data-placement="top" title="{{ __('Show') }}"><i class="fa fa-eye"></i></button>
+                    <button data-href="{{ route('customer.show', ['customer_id' => $customer->id, 'sort' => $sort, 'order' => $newOrder, 'limit' => $limit, 'page' => $page, 'search' => $search]) }}" class="btn btn-success customer-show" data-toggle="tooltip" data-placement="top" title="{{ __('Show') }}"><i class="fa fa-eye"></i></button>
 
-                    <a href="{{ route('customer.form_update', ['customer_id' => $customer->id, 'sort' => 'last_name', 'order' => $newOrder, 'limit' => $limit, 'page' => $page, 'search' => $search]) }}" class="btn btn-warning customer-update" data-toggle="tooltip" data-placement="top" title="{{ __('Edit') }}"><i class="fa fa-pencil"></i></a>
+                    <a href="{{ route('customer.form_update', ['customer_id' => $customer->id, 'sort' => $sort, 'order' => $newOrder, 'limit' => $limit, 'page' => $page, 'search' => $search]) }}" class="btn btn-warning customer-update" data-toggle="tooltip" data-placement="top" title="{{ __('Edit') }}"><i class="fa fa-pencil"></i></a>
 
-                    <button data-form-action="{{ route('customer.destroy', ['customer_id' => $customer->id, 'sort' => 'last_name', 'order' => $newOrder, 'limit' => $limit, 'page' => $page, 'search' => $search]) }}" class="customer-delete btn btn-danger" data-toggle="tooltip" data-placement="top" title="{{ __('Delete') }}"><i class="fa fa-trash"></i></button>
+                    <button data-form-action="{{ route('customer.destroy', ['customer_id' => $customer->id, 'sort' => $sort, 'order' => $newOrder, 'limit' => $limit, 'page' => $page, 'search' => $search]) }}" class="customer-delete btn btn-danger" data-toggle="tooltip" data-placement="top" title="{{ __('Delete') }}"><i class="fa fa-trash"></i></button>
                 </td>
             </tr>
         @empty

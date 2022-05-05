@@ -60,6 +60,10 @@ class CustomerController extends BaseController
 
         $customers = $query->paginate($limit);
 
+        //$customers = GetCustomers::get($sort, $order, $search);
+        // TODO: REVERSE ORDER
+        //$newOrder = $sort == 'asc' ? 'desc' : 'asc';
+
         // View
         return view(
             'customer.index',
